@@ -104,6 +104,8 @@ def run_tests(search_paths, pipelined=False):
       did_pass, reason = test.run(pipelined=pipelined)
     except KeyboardInterrupt:
       sys.exit(1)
+    except SystemExit:
+      raise
     except:
       traceback.print_exc()
     if did_pass:
