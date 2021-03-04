@@ -45,7 +45,7 @@ class TestCase():
     passed = False
     proc = None
     try:
-      proc = subprocess.Popen([sys.executable, str(logisim_path), "-tty", "table,binary,csv", self.circ_path], stdout=subprocess.PIPE, encoding="utf-8", errors="ignore", env=tools_env)
+      proc = subprocess.Popen([sys.executable, str(logisim_path), "-tty", "table,binary,csv", str(self.circ_path)], stdout=subprocess.PIPE, encoding="utf-8", errors="ignore", env=tools_env)
 
       with self.get_expected_table_path(pipelined=pipelined).open("r", encoding="utf-8", errors="ignore") as expected_file:
         passed = self.check_output(proc.stdout, expected_file)
