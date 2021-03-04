@@ -201,6 +201,7 @@
       <a name="width" val="32"/>
     </comp>
     <comp lib="0" loc="(1070,760)" name="Pin">
+      <a name="appearance" val="NewPins"/>
       <a name="label" val="Requested_Instruction"/>
       <a name="output" val="true"/>
       <a name="width" val="32"/>
@@ -210,7 +211,7 @@
       <a name="radix" val="16"/>
     </comp>
     <comp lib="0" loc="(1140,660)" name="Tunnel">
-      <a name="label" val="Instruction"/>
+      <a name="label" val="INSTRUCTION"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="0" loc="(1310,790)" name="Tunnel">
@@ -218,6 +219,7 @@
       <a name="label" val="clk"/>
     </comp>
     <comp lib="0" loc="(1580,820)" name="Pin">
+      <a name="appearance" val="NewPins"/>
       <a name="facing" val="west"/>
       <a name="label" val="Time_Step"/>
       <a name="output" val="true"/>
@@ -245,7 +247,7 @@
     </comp>
     <comp lib="0" loc="(250,270)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="Instruction"/>
+      <a name="label" val="INSTRUCTION"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="0" loc="(370,110)" name="Pin">
@@ -265,7 +267,7 @@
     </comp>
     <comp lib="0" loc="(480,610)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="fetch_addr"/>
+      <a name="label" val="PROGRAM_COUNTER"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="0" loc="(500,610)" name="Splitter">
@@ -306,6 +308,7 @@
       <a name="incoming" val="32"/>
     </comp>
     <comp lib="0" loc="(520,710)" name="Pin">
+      <a name="appearance" val="NewPins"/>
       <a name="facing" val="west"/>
       <a name="label" val="Requested_Address"/>
       <a name="output" val="true"/>
@@ -319,7 +322,7 @@
     </comp>
     <comp lib="0" loc="(550,250)" name="Tunnel">
       <a name="facing" val="south"/>
-      <a name="label" val="fetch_addr"/>
+      <a name="label" val="PROGRAM_COUNTER"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="0" loc="(640,110)" name="Pin">

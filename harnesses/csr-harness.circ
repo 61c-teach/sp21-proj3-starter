@@ -175,12 +175,13 @@
       <a name="output" val="true"/>
       <a name="width" val="32"/>
     </comp>
-    <comp lib="0" loc="(290,360)" name="Pin">
-      <a name="facing" val="south"/>
+    <comp lib="0" loc="(290,390)" name="Pin">
+      <a name="appearance" val="NewPins"/>
       <a name="label" val="INSTRUCTION"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="0" loc="(300,660)" name="Pin">
+      <a name="appearance" val="NewPins"/>
       <a name="label" val="clk"/>
     </comp>
     <comp lib="0" loc="(400,130)" name="Pin">
@@ -236,7 +237,6 @@
     <wire from="(1140,570)" to="(1140,680)"/>
     <wire from="(290,130)" to="(290,200)"/>
     <wire from="(290,200)" to="(640,200)"/>
-    <wire from="(290,360)" to="(290,390)"/>
     <wire from="(290,390)" to="(410,390)"/>
     <wire from="(300,660)" to="(390,660)"/>
     <wire from="(390,370)" to="(390,660)"/>

@@ -278,6 +278,7 @@
       <a name="width" val="5"/>
     </comp>
     <comp lib="0" loc="(1520,1180)" name="Pin">
+      <a name="appearance" val="NewPins"/>
       <a name="facing" val="west"/>
       <a name="label" val="WriteData"/>
       <a name="output" val="true"/>
@@ -296,12 +297,14 @@
       <a name="width" val="32"/>
     </comp>
     <comp lib="0" loc="(1780,500)" name="Pin">
+      <a name="appearance" val="NewPins"/>
       <a name="facing" val="west"/>
       <a name="label" val="Read_Data_1"/>
       <a name="output" val="true"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="0" loc="(1780,600)" name="Pin">
+      <a name="appearance" val="NewPins"/>
       <a name="facing" val="west"/>
       <a name="label" val="Read_Data_2"/>
       <a name="output" val="true"/>
@@ -332,8 +335,9 @@
       <a name="label" val="Test"/>
       <a name="width" val="8"/>
     </comp>
-    <comp lib="0" loc="(510,70)" name="Pin">
-      <a name="facing" val="south"/>
+    <comp lib="0" loc="(530,70)" name="Pin">
+      <a name="appearance" val="NewPins"/>
+      <a name="facing" val="west"/>
       <a name="label" val="Test"/>
       <a name="output" val="true"/>
       <a name="width" val="8"/>
@@ -483,6 +487,7 @@
     <wire from="(510,330)" to="(540,330)"/>
     <wire from="(510,430)" to="(550,430)"/>
     <wire from="(510,70)" to="(510,260)"/>
+    <wire from="(510,70)" to="(530,70)"/>
     <wire from="(580,320)" to="(600,320)"/>
     <wire from="(600,320)" to="(600,360)"/>
     <wire from="(70,460)" to="(110,460)"/>
