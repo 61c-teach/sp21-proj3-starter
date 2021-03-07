@@ -109,13 +109,13 @@ def run_tests(search_paths, pipelined=False):
     except:
       traceback.print_exc()
     if did_pass:
-      print(f"PASS: {test.id}")
+      print(f"PASS: {test.id}", flush=True)
       passed_tests.append(test)
     else:
-      print(f"FAIL: {test.id} ({reason})")
+      print(f"FAIL: {test.id} ({reason})", flush=True)
       failed_tests.append(test)
 
-  print(f"Passed {len(passed_tests)}/{len(failed_tests) + len(passed_tests)} tests")
+  print(f"Passed {len(passed_tests)}/{len(failed_tests) + len(passed_tests)} tests", flush=True)
 
 
 def kill_proc(proc):
