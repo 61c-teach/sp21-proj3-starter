@@ -120,12 +120,11 @@ def run_tests(search_paths, pipelined=False):
 
 def kill_proc(proc):
   if proc.poll() == None:
-    if sys.platform == "win32":
-      os.kill(proc.pid, signal.CTRL_C_EVENT)
-      for _ in range(10):
-        if proc.poll() != None:
-          break
-        time.sleep(0.1)
+    proc.terminate()
+    for _ in range(10):
+      if proc.poll() != None:
+        return
+      time.sleep(0.1)
   if proc.poll() == None:
     proc.kill()
 
