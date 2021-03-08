@@ -80,7 +80,7 @@ class TestCase():
     output_path = self.get_actual_table_path()
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w") as output_file:
-      output_csv = csv.writer(output_file)
+      output_csv = csv.writer(output_file, lineterminator="\n")
       for line in actual_lines:
         output_csv.writerow(line)
     return passed
