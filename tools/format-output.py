@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from pathlib import Path
 import argparse
 import csv
@@ -31,7 +29,21 @@ known_formats = {
     ["Read_Data_1", "ReadData1"],
     ["Read_Data_2", "ReadData2"],
   ],
-  "part-b/*/*/*.out": [
+  "part-b/csr/*/*.out": [
+    ["Time_Step",             "Time"],
+    ["Requested_Address",     "PC"],
+    ["Requested_Instruction", "Instruc."],
+    ["ra",                    "ra (x1)"],
+    ["sp",                    "sp (x2)"],
+    ["t0",                    "t0 (x5)"],
+    ["t1",                    "t1 (x6)"],
+    ["t2",                    "t2 (x7)"],
+    ["s0",                    "s0 (x8)"],
+    ["s1",                    "s1 (x9)"],
+    ["a0",                    "a0 (x10)"],
+    ["tohost",                "tohost"],
+  ],
+  "part-b/sanity/*/*.out": [
     ["Time_Step",             "Time"],
     ["Requested_Address",     "PC"],
     ["Requested_Instruction", "Instruc."],
@@ -45,7 +57,8 @@ known_formats = {
     ["a0",                    "a0 (x10)"],
   ],
 }
-known_formats["part-a/addi/*/*.out"] = known_formats["part-b/*/*/*.out"]
+known_formats["part-a/addi/*/*.out"] = known_formats["part-b/sanity/*/*.out"]
+known_formats["part-b/custom/*/*.out"] = known_formats["part-b/sanity/*/*.out"]
 
 
 def bin2hex(bin_str):

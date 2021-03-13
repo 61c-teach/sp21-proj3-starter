@@ -250,6 +250,8 @@ $RECYCLE.BIN/
 .nfs*
 
 # Project 3
+/reference.csv
 /reference.out
+/student.csv
 /student.out
 /tests/**/student-output/*.out
