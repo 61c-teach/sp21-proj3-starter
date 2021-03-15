@@ -1,9 +1,8 @@
-#!/usr/bin/env python3
-
 from pathlib import Path
 import argparse
 import csv
 import os
+import re
 import signal
 import subprocess
 import sys
@@ -11,12 +10,56 @@ import time
 import traceback
 
 
+CIRC_IMPORT_REGEX = re.compile(rf"desc=\"file#([^\"]+?\.circ)\"")
+
 proj_dir_path = Path(__file__).parent
 tests_dir_path = proj_dir_path / "tests"
 logisim_path = proj_dir_path / "tools" / "logisim"
 
 tools_env = os.environ.copy()
 tools_env["CS61C_TOOLS_ARGS"] = tools_env.get("CS61C_TOOLS_ARGS", "") + " -q"
+
+known_imports_dict = {
+  "cpu/cpu.circ": [
+    "cpu/alu.circ",
+    "cpu/branch-comp.circ",
+    "cpu/control-logic.circ",
+    "cpu/csr.circ",
+    "cpu/imm-gen.circ",
+    "cpu/regfile.circ",
+  ],
+  "harnesses/alu-harness.circ": [
+    "cpu/alu.circ",
+  ],
+  "harnesses/csr-harness.circ": [
+    "cpu/cpu.circ",
+    "cpu/mem.circ",
+  ],
+  "harnesses/cpu-harness.circ": [
+    "cpu/cpu.circ",
+    "cpu/mem.circ",
+  ],
+  "harnesses/regfile-harness.circ": [
+    "cpu/regfile.circ",
+  ],
+  "harnesses/run.circ": [
+    "harnesses/cpu-harness.circ",
+  ],
+  "tests/part-a/alu/*.circ": [
+    "cpu/alu.circ",
+  ],
+  "tests/part-a/regfile/*.circ": [
+    "cpu/regfile.circ",
+  ],
+  "tests/part-b/sanity/*.circ": [
+    "harnesses/cpu-harness.circ",
+  ],
+  "tests/part-b/csr/*.circ": [
+    "harnesses/csr-harness.circ",
+  ],
+}
+known_imports_dict["tests/part-a/addi/*.circ"] = known_imports_dict["tests/part-b/sanity/*.circ"]
+known_imports_dict["tests/part-b/custom/*.circ"] = known_imports_dict["tests/part-b/sanity/*.circ"]
 
 
 class TestCase():
@@ -30,6 +73,9 @@ class TestCase():
       return False
     return True
 
+  def fix_circ(self):
+    fix_circ(self.circ_path)
+
   def get_actual_table_path(self):
     return self.circ_path.parent / "student-output" / f"{self.name}-student.out"
 
@@ -40,6 +86,8 @@ class TestCase():
     return path
 
   def run(self, pipelined=False):
+    self.fix_circ()
+
     if pipelined and not self.can_pipeline():
       pipelined = False
     passed = False
@@ -47,7 +95,7 @@ class TestCase():
     try:
       proc = subprocess.Popen([sys.executable, str(logisim_path), "-tty", "table,binary,csv", str(self.circ_path)], stdout=subprocess.PIPE, encoding="utf-8", errors="ignore", env=tools_env)
 
-      with self.get_expected_table_path(pipelined=pipelined).open("r", encoding="utf-8", errors="ignore", newline="") as expected_file:
+      with self.get_expected_table_path(pipelined=pipelined).open("r", encoding="utf-8", errors="ignore") as expected_file:
         passed = self.check_output(proc.stdout, expected_file)
         kill_proc(proc)
         if passed:
@@ -79,11 +127,45 @@ class TestCase():
       actual_lines.append(actual_line)
     output_path = self.get_actual_table_path()
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with output_path.open("w", newline="") as output_file:
+    with output_path.open("w") as output_file:
       output_csv = csv.writer(output_file, lineterminator="\n")
       for line in actual_lines:
         output_csv.writerow(line)
     return passed
+
+def fix_circ(circ_path):
+  circ_path = circ_path.resolve()
+
+  for glob, known_imports in known_imports_dict.items():
+    if circ_path.match(glob):
+      old_data = None
+      data = None
+      is_modified = False
+      with circ_path.open("r", encoding="utf-8") as test_circ:
+        old_data = test_circ.read()
+        data = old_data
+      for match in re.finditer(CIRC_IMPORT_REGEX, old_data):
+        import_path_str = match.group(1)
+        import_path = (circ_path.parent / Path(import_path_str)).resolve()
+        for known_import in known_imports:
+          if import_path.match(known_import):
+            known_import_path = proj_dir_path / known_import
+            expected_import_path = Path(os.path.relpath(known_import_path, circ_path.parent))
+            if import_path_str != str(expected_import_path):
+              print(f"Fixing bad import {import_path_str} in {str(circ_path)} (should be {expected_import_path})")
+              data = data.replace(import_path_str, str(expected_import_path))
+              is_modified = True
+            break
+        else:
+          expected_import_path = Path(os.path.relpath(import_path, circ_path.parent))
+          if import_path_str != str(expected_import_path):
+            print(f"Fixing probably bad import {import_path_str} in {str(circ_path)} (should be {expected_import_path})")
+            data = data.replace(import_path_str, str(expected_import_path))
+            is_modified = True
+      if is_modified:
+        with circ_path.open("w", encoding="utf-8") as test_circ:
+          test_circ.write(data)
+      break
 
 def run_tests(search_paths, pipelined=False):
   circ_paths = []
@@ -134,5 +216,10 @@ if __name__ == "__main__":
   parser.add_argument("test_path", help="Path to a test circuit, or a directory containing test circuits", type=Path, nargs="+")
   parser.add_argument("-p", "--pipelined", help="Check against reference output for 2-stage pipeline (when applicable)", action="store_true", default=False)
   args = parser.parse_args()
+
+  for circ_path in proj_dir_path.rglob("cpu/*.circ"):
+    fix_circ(circ_path)
+  for circ_path in proj_dir_path.rglob("harnesses/*.circ"):
+    fix_circ(circ_path)
 
   run_tests(args.test_path, args.pipelined)
