@@ -47,7 +47,7 @@ class TestCase():
     try:
       proc = subprocess.Popen([sys.executable, str(logisim_path), "-tty", "table,binary,csv", str(self.circ_path)], stdout=subprocess.PIPE, encoding="utf-8", errors="ignore", env=tools_env)
 
-      with self.get_expected_table_path(pipelined=pipelined).open("r", encoding="utf-8", errors="ignore") as expected_file:
+      with self.get_expected_table_path(pipelined=pipelined).open("r", encoding="utf-8", errors="ignore", newline="") as expected_file:
         passed = self.check_output(proc.stdout, expected_file)
         kill_proc(proc)
         if passed:
@@ -79,7 +79,7 @@ class TestCase():
       actual_lines.append(actual_line)
     output_path = self.get_actual_table_path()
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with output_path.open("w") as output_file:
+    with output_path.open("w", newline="") as output_file:
       output_csv = csv.writer(output_file, lineterminator="\n")
       for line in actual_lines:
         output_csv.writerow(line)
