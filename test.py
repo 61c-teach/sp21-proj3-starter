@@ -10,7 +10,7 @@ import time
 import traceback
 
 
-CIRC_IMPORT_REGEX = re.compile(rf"desc=\"file#([^\"]+?\.circ)\"")
+CIRC_IMPORT_REGEX = re.compile(r"desc=\"file#([^\"]+?\.circ)\"")
 
 proj_dir_path = Path(__file__).parent
 tests_dir_path = proj_dir_path / "tests"
@@ -151,16 +151,16 @@ def fix_circ(circ_path):
           if import_path.match(known_import):
             known_import_path = proj_dir_path / known_import
             expected_import_path = Path(os.path.relpath(known_import_path, circ_path.parent))
-            if import_path_str != str(expected_import_path):
+            if import_path_str != expected_import_path.as_posix():
               print(f"Fixing bad import {import_path_str} in {str(circ_path)} (should be {expected_import_path})")
-              data = data.replace(import_path_str, str(expected_import_path))
+              data = data.replace(import_path_str, expected_import_path.as_posix())
               is_modified = True
             break
         else:
           expected_import_path = Path(os.path.relpath(import_path, circ_path.parent))
-          if import_path_str != str(expected_import_path):
+          if import_path_str != expected_import_path.as_posix():
             print(f"Fixing probably bad import {import_path_str} in {str(circ_path)} (should be {expected_import_path})")
-            data = data.replace(import_path_str, str(expected_import_path))
+            data = data.replace(import_path_str, expected_import_path.as_posix())
             is_modified = True
       if is_modified:
         with circ_path.open("w", encoding="utf-8") as test_circ:
