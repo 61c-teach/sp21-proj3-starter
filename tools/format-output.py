@@ -77,6 +77,8 @@ def bin2hex(bin_str):
 
 def print_line(arr, lengths, remap=None):
   arr_len = len(arr)
+  if remap is not None and len(remap) < arr_len:
+    arr_len = len(remap)
   for i in range(arr_len):
     suffix = "\n" if i == arr_len - 1 else " "
     if remap:
