@@ -29,7 +29,7 @@ known_formats = {
     ["Read_Data_1", "ReadData1"],
     ["Read_Data_2", "ReadData2"],
   ],
-  "part-b/csr/*/*.out": [
+  "part-b/sanity/*/cpu-csr*.out": [
     ["Time_Step",             "Time"],
     ["Requested_Address",     "PC"],
     ["Requested_Instruction", "Instruc."],
