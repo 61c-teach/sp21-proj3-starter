@@ -43,7 +43,10 @@ def generate_test_circ(asm_path, test_circ_path, slug, num_cycles):
       if inst == "":
         inst = "0"
       insts.append(inst)
-  tmp_inst_hex_path.unlink(missing_ok=True)
+  try:
+    tmp_inst_hex_path.unlink()
+  except FileNotFoundError:
+    pass
 
   rom_contents = f"addr/data: 14 32\n{' '.join(insts)}\n"
   halt_constant_val = hex(num_cycles)
@@ -78,7 +81,10 @@ def generate_output(asm_path, reference_output_path, slug, num_cycles=-1, is_pip
     proc.wait()
   if proc.returncode != 0:
     raise TestCreateException(f"Venus errored while generating reference output for {str(asm_path)}")
-    tmp_trace_path.unlink(missing_ok=True)
+    try:
+      tmp_trace_path.unlink()
+    except FileNotFoundError:
+      pass
     return
   with tmp_trace_path.open("r") as trace_file:
     with reference_output_path.open("w", newline="") as reference_output_file:
@@ -90,7 +96,10 @@ def generate_output(asm_path, reference_output_path, slug, num_cycles=-1, is_pip
         row = trace_line.split(",")
         reference_output.writerow(row)
         detected_num_cycles += 1
-  tmp_trace_path.unlink(missing_ok=True)
+  try:
+    tmp_trace_path.unlink()
+  except FileNotFoundError:
+    pass
 
   output_type = "pipelined" if is_pipelined else "single-cycle"
   print(f"[{slug}] generated {output_type} reference output (cycles: {detected_num_cycles})")
