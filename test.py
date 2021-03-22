@@ -51,11 +51,11 @@ known_imports_dict = {
   "tests/part-a/regfile/*.circ": [
     "cpu/regfile.circ",
   ],
+  "tests/part-b/sanity/cpu-csr*.circ": [
+    "harnesses/csr-harness.circ",
+  ],
   "tests/part-b/sanity/*.circ": [
     "harnesses/cpu-harness.circ",
-  ],
-  "tests/part-b/csr/*.circ": [
-    "harnesses/csr-harness.circ",
   ],
 }
 known_imports_dict["tests/part-a/addi/*.circ"] = known_imports_dict["tests/part-b/sanity/*.circ"]
