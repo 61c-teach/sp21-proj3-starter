@@ -79,13 +79,26 @@ def generate_output(asm_path, reference_output_path, slug, num_cycles=-1, is_pip
   with tmp_trace_file:
     proc = subprocess.Popen(venus_cmd, stdout=tmp_trace_file, encoding="utf-8", errors="ignore", env=tools_env)
     proc.wait()
-  if proc.returncode != 0:
-    raise TestCreateException(f"Venus errored while generating reference output for {str(asm_path)}")
+  did_error = proc.returncode != 0
+  # Venus runtime errors have exit code 0
+  if not did_error and tmp_trace_path.exists():
+    with tmp_trace_path.open("r") as trace_file:
+      for trace_line in trace_file:
+        if "[ERROR]" in trace_line:
+          did_error = True
+          break
+  if did_error:
+    if tmp_trace_path.exists():
+      print(f"Venus errored (exit code {proc.returncode}), dumping stdout...")
+      print("--- BEGIN stdout ---")
+      with tmp_trace_path.open("r") as trace_file:
+        print(trace_file.read())
+      print("---- END stdout ----")
     try:
       tmp_trace_path.unlink()
     except FileNotFoundError:
       pass
-    return
+    raise TestCreateException(f"Venus errored while generating reference output for {str(asm_path)}")
   with tmp_trace_path.open("r") as trace_file:
     with reference_output_path.open("w", newline="") as reference_output_file:
       reference_output = csv.writer(reference_output_file, lineterminator="\n")
