@@ -3,7 +3,6 @@ import argparse
 import csv
 import os
 import re
-import signal
 import subprocess
 import sys
 import time
@@ -65,8 +64,8 @@ known_imports_dict["tests/part-b/custom/*.circ"] = known_imports_dict["tests/par
 class TestCase():
   def __init__(self, circ_path, name=None):
     self.circ_path = Path(circ_path)
-    self.id = str(circ_path)
-    self.name = name or circ_path.stem
+    self.id = str(self.circ_path)
+    self.name = name or self.circ_path.stem
 
   def can_pipeline(self):
     if self.circ_path.match("alu/*.circ") or self.circ_path.match("regfile/*.circ"):
@@ -98,10 +97,9 @@ class TestCase():
       with self.get_expected_table_path(pipelined=pipelined).open("r", encoding="utf-8", errors="ignore") as expected_file:
         passed = self.check_output(proc.stdout, expected_file)
         kill_proc(proc)
-        if passed:
-          return (True, "Matched expected output")
-        else:
+        if not passed:
           return (False, "Did not match expected output")
+        return (True, "Matched expected output")
     except KeyboardInterrupt:
       kill_proc(proc)
       sys.exit(1)
@@ -118,11 +116,11 @@ class TestCase():
     while True:
       actual_line = next(actual_csv, None)
       expected_line = next(expected_csv, None)
-      if expected_line == None:
+      if expected_line is None:
         break
       if actual_line != expected_line:
         passed = False
-      if actual_line == None:
+      if actual_line is None:
         break
       actual_lines.append(actual_line)
     output_path = self.get_actual_table_path()
@@ -177,6 +175,11 @@ def run_tests(search_paths, pipelined=False):
       circ_paths.append(circ_path)
   circ_paths = sorted(circ_paths)
 
+  for circ_path in proj_dir_path.rglob("cpu/*.circ"):
+    fix_circ(circ_path)
+  for circ_path in proj_dir_path.rglob("harnesses/*.circ"):
+    fix_circ(circ_path)
+
   failed_tests = []
   passed_tests = []
   for circ_path in circ_paths:
@@ -201,13 +204,13 @@ def run_tests(search_paths, pipelined=False):
 
 
 def kill_proc(proc):
-  if proc.poll() == None:
+  if proc.poll() is None:
     proc.terminate()
     for _ in range(10):
-      if proc.poll() != None:
+      if proc.poll() is not None:
         return
       time.sleep(0.1)
-  if proc.poll() == None:
+  if proc.poll() is None:
     proc.kill()
 
 
@@ -216,10 +219,5 @@ if __name__ == "__main__":
   parser.add_argument("test_path", help="Path to a test circuit, or a directory containing test circuits", type=Path, nargs="+")
   parser.add_argument("-p", "--pipelined", help="Check against reference output for 2-stage pipeline (when applicable)", action="store_true", default=False)
   args = parser.parse_args()
-
-  for circ_path in proj_dir_path.rglob("cpu/*.circ"):
-    fix_circ(circ_path)
-  for circ_path in proj_dir_path.rglob("harnesses/*.circ"):
-    fix_circ(circ_path)
 
   run_tests(args.test_path, args.pipelined)
