@@ -147,17 +147,17 @@ def fix_circ(circ_path):
         import_path = (circ_path.parent / Path(import_path_str)).resolve()
         for known_import in known_imports:
           if import_path.match(known_import):
-            known_import_path = proj_dir_path / known_import
+            known_import_path = (proj_dir_path / known_import).resolve()
             expected_import_path = Path(os.path.relpath(known_import_path, circ_path.parent))
             if import_path_str != expected_import_path.as_posix():
-              print(f"Fixing bad import {import_path_str} in {str(circ_path)} (should be {expected_import_path})")
+              print(f"Fixing bad import {import_path_str} in {circ_path.as_posix()} (should be {expected_import_path.as_posix()})")
               data = data.replace(import_path_str, expected_import_path.as_posix())
               is_modified = True
             break
         else:
           expected_import_path = Path(os.path.relpath(import_path, circ_path.parent))
           if import_path_str != expected_import_path.as_posix():
-            print(f"Fixing probably bad import {import_path_str} in {str(circ_path)} (should be {expected_import_path})")
+            print(f"Fixing probably bad import {import_path_str} in {circ_path.as_posix()} (should be {expected_import_path.as_posix()})")
             data = data.replace(import_path_str, expected_import_path.as_posix())
             is_modified = True
       if is_modified:
